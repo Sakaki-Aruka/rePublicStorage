@@ -1,0 +1,6 @@
+name: RePublicStorage
+version: '${project.version}'
+main: republicstorage.republicstorage.RePublicStorage
+api-version: 1.19
+authors: [ SakakiAruka ]
+description: public storage (remake)
