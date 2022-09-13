@@ -13,7 +13,7 @@ public class Deposit{
 
         int requestAmount =0;
         try{
-            if(!(args[1].equalsIgnoreCase("all"))){
+            if(!(args[1].equalsIgnoreCase("all")) && !(args[1].equalsIgnoreCase("hand"))){
                 requestAmount = Integer.valueOf(args[2]);
             }
         }catch (Exception exception){
@@ -31,8 +31,14 @@ public class Deposit{
                 }else{
                     // exist uploadable item
                     String name = itemStack.getType().name();
-                    long amountOnMap = itemAmountMap.get(name) + itemStack.getAmount();
-                    itemAmountMap.replace(name,amountOnMap);
+                    if(itemAmountMap.containsKey(name)){
+                        long amountOnMap = itemAmountMap.get(name) + itemStack.getAmount();
+                        itemAmountMap.replace(name,amountOnMap);
+                    }else{
+                        long amountPut = itemStack.getAmount();
+                        itemAmountMap.put(name,amountPut);
+                    }
+
                     itemStack.setAmount(0);
 
                 }
@@ -63,7 +69,7 @@ public class Deposit{
         }else if(itemAmountMap.containsKey(args[1].toUpperCase(Locale.ROOT))){
             // storage deposit [ItemId]
             String requestId = args[1].toUpperCase(Locale.ROOT);
-            if(this.ignoreCheck(requestId.toUpperCase(Locale.ROOT))){
+            if(this.ignoreCheck(requestId)){
                 player.sendMessage("§cDenied to upload.[Invalid item error]");
                 return;
             }
