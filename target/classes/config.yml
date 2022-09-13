@@ -2,7 +2,7 @@
 
 items: 1
 
-ignore: ""
+ignore: "LAVA_BUCKET"
 
 item0:
   name: STONE

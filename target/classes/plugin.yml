@@ -7,7 +7,7 @@ description: public storage (remake)
 commands:
   storage:
     permission: storage.default
-  storagereload:
+  storagewrite:
     permission: storage.op
 
 
