@@ -4,3 +4,15 @@ main: republicstorage.republicstorage.RePublicStorage
 api-version: 1.19
 authors: [ SakakiAruka ]
 description: public storage (remake)
+commands:
+  storage:
+    permission: storage.default
+  storagereload:
+    permission: storage.op
+
+
+permissions:
+  storage.default:
+    default: true
+  storage.op:
+    default: op

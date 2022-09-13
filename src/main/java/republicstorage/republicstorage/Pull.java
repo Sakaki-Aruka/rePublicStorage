@@ -1,5 +1,6 @@
 package republicstorage.republicstorage;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -29,10 +30,12 @@ public class Pull {
             try{
                 requestAmount = Integer.valueOf(args[2]);
                 if(requestAmount > 2000){
+                    player.sendMessage("§c[PublicStorage]:Invalid request error.");
                     return;
                 }
             }catch(Exception e){
                 // fail to exchange argument type
+                player.sendMessage("§c[PublicStorage]:Invalid request error.");
                 return;
             }
         }
@@ -48,17 +51,33 @@ public class Pull {
             ItemStack itemStack = new ItemStack(Material.valueOf(args[1].toUpperCase(Locale.ROOT)));
             itemStack.setAmount(limit);
             world.dropItemNaturally(location,itemStack);
+
+            String name = args[1].toUpperCase(Locale.ROOT);
+            long remaining = itemAmountMap.get(name) - limit;
+            itemAmountMap.replace(name,remaining);
+            return;
+
         }else{
             // amount set
             if(requestAmount > 2000 || requestAmount < 1){
+                player.sendMessage("§c[PublicStorage]:Invalid request error.");
                 return;
             }else if(requestAmount > itemAmountMap.get(args[1].toUpperCase(Locale.ROOT))){
                 // over the amount on the storage
+                player.sendMessage("§c[PublicStorage]:Invalid request error.[over the limit]");
                 return;
             }
             ItemStack itemStack = new ItemStack(Material.valueOf(args[1].toUpperCase(Locale.ROOT)));
             itemStack.setAmount(requestAmount);
             world.dropItemNaturally(location,itemStack);
+
+            String name = args[1].toUpperCase(Locale.ROOT);
+            long remaining = itemAmountMap.get(name) - requestAmount;
+
+            //debug
+            Bukkit.broadcastMessage("name:"+name+"/remaining:"+remaining);
+
+            itemAmountMap.replace(name,remaining);
             return;
         }
 

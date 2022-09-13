@@ -24,8 +24,8 @@ public class SettingsLoad {
         ignore = new ArrayList<>(Arrays.asList(FC.getString("ignore").split(",")));
 
         for(int i=0;i < items;i++){
-            String itemName = FC.getString(i+".name");
-            long itemAmount = FC.getLong(i+".amount");
+            String itemName = FC.getString("item"+i+".name");
+            long itemAmount = FC.getLong("item"+i+".amount");
 
             itemAmountMap.put(itemName,itemAmount);
             tabComplete.add(itemName);
