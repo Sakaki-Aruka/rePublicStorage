@@ -1,0 +1,9 @@
+# this is a config file.
+
+items: 1
+
+ignore: ""
+
+0:
+  name: STONE
+  amount: 0
