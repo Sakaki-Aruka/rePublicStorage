@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
+import static republicstorage.republicstorage.SettingsLoad.ignore;
 import static republicstorage.republicstorage.SettingsLoad.itemAmountMap;
 
 public class Show {
@@ -14,9 +15,12 @@ public class Show {
         for(String loop : ids){
             String upperLoop = loop.toUpperCase(Locale.ROOT);
             if(itemAmountMap.containsKey(upperLoop)){
-                player.sendMessage("[Result]:"+upperLoop+" / "+itemAmountMap.get(upperLoop));
+                player.sendMessage("[Result(Show)]:"+upperLoop+" / "+itemAmountMap.get(upperLoop));
+            }else if(args[1].equalsIgnoreCase("ignore")){
+                // show ignore items list
+                player.sendMessage("§3[Result(Ignore)]:"+String.join(",",ignore));
             }else{
-                player.sendMessage("§c[Result]:\""+upperLoop+"\"Not Found");
+                player.sendMessage("§c[Result]:\""+upperLoop+"\" -> Not Found");
             }
 
         }

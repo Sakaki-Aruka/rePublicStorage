@@ -1,11 +1,12 @@
 package republicstorage.republicstorage;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.Locale;
 import java.util.Map;
 
-import static republicstorage.republicstorage.SettingsLoad.itemAmountMap;
+import static republicstorage.republicstorage.SettingsLoad.*;
 
 public class Debug {
     public void mapDebug(Player player){
@@ -39,6 +40,40 @@ public class Debug {
             }else if(operation.equalsIgnoreCase("multi")){
                 scaleDouble = Double.valueOf(args[2]);
             }else{
+                if(args[1].equalsIgnoreCase("ignore")){
+                    //
+                    if(args[2].equalsIgnoreCase("add") || args[2].equalsIgnoreCase("remove")){
+                        try{
+                            Material test = Material.valueOf(args[3].toUpperCase());
+                        }catch (Exception exception){
+                            player.sendMessage("[PublicStorage]:Invalid item id.");
+                            return;
+                        }
+                        switch(args[2]){
+                            case "add":
+                                if(!(ignore.contains(args[3].toUpperCase(Locale.ROOT)))){
+                                    ignore.add(args[3].toUpperCase(Locale.ROOT));
+                                    player.sendMessage("[Modify Result]:"+args[3].toUpperCase(Locale.ROOT)+" added to the ignore item list.");
+                                }else{
+                                    player.sendMessage("[Modify Result]:The item has already exist on the ignore list. So, did not add.");
+                                }
+                                break;
+
+                            case "remove":
+                                if(ignore.contains(args[3])){
+                                    ignore.remove(args[3].toUpperCase(Locale.ROOT));
+                                    player.sendMessage("[Modify Result]:"+args[3].toUpperCase(Locale.ROOT)+" removed to the ignore item list.");
+                                }else{
+                                    player.sendMessage("Not find the item in the ignore item list. So, could not remove that.");
+                                }
+                                break;
+                        }
+                        return;
+                    }else{
+                        player.sendMessage("[PublicStorage Modify]:Invalid operation(section:ignore)");
+                        return;
+                    }
+                }
                 return;
             }
 

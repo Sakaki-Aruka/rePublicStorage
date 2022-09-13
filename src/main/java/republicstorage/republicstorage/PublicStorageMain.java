@@ -7,34 +7,39 @@ import org.bukkit.entity.Player;
 
 public class PublicStorageMain implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command,String label,String[] args){
+        Player player =(Player) sender;
+
         if(!(sender instanceof Player) || args.length != 3){
             if(!(args[0].equalsIgnoreCase("debug") || args[0].equalsIgnoreCase("modify")) && !(sender.isOp())){
                 return false;
             }else if(args[0].equalsIgnoreCase("show") && args.length != 2){
+                return false;
+            }else if (args[0].equalsIgnoreCase("write") && args.length > 1){
                 return false;
             }
         }
 
         switch (args[0]){
             case "deposit":
-                new Deposit().depositMain(args,(Player) sender);
+                new Deposit().depositMain(args,player);
                 break;
 
             case "debug":
-                new Debug().mapDebug((Player) sender);
+                new Debug().mapDebug(player);
                 break;
 
             case "pull":
-                new Pull().pullMain(args,(Player) sender);
+                new Pull().pullMain(args,player);
                 break;
 
             case "modify":
-                new Debug().mapModify((Player)sender,args);
+                new Debug().mapModify(player,args);
                 break;
 
             case "show":
-                new Show().showMain((Player) sender,args);
+                new Show().showMain(player,args);
                 break;
+
         }
 
         return true;
