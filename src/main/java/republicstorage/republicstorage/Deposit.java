@@ -32,7 +32,7 @@ public class Deposit{
 
 
                 //debug (ignoreCheck use)
-                if(itemStack.getEnchantments().isEmpty()){
+                if(itemStack.getEnchantments().isEmpty() && ignoreCheck(itemName)){
                     // exist item and no enchantment
                     if(itemAmountMap.containsKey(itemName)){
                         // exist on the storage hashmap
@@ -207,19 +207,13 @@ public class Deposit{
     boolean ignoreCheck(String itemName){
 
         //debug
-        return true;
+        //return true;
 
-        /*
+
         if(ignore.contains(itemName)){
             return false;
         }else{
             return true;
         }
-
-         */
-    }
-
-    private void calc(Player player,String idUpper,PlayerInventory playerInventory){
-        //
     }
 }
