@@ -65,13 +65,21 @@ public class PublicStorageMain implements CommandExecutor, TabCompleter {
                 returnArray = new ArrayList<>(Arrays.asList("deposit","pull","show","modify","debug"));
                 return returnArray;
             }else if(args.length ==2){
-                if(args[1].equalsIgnoreCase("deposit")){
+                if(args[0].equalsIgnoreCase("deposit")){
                     returnArray = (ArrayList<String>) tabComplete.clone();
                     returnArray.add("all");
                     returnArray.add("hand");
                     return returnArray;
-                }else if(args[1].equalsIgnoreCase("pull") || args[1].equalsIgnoreCase("show")){
+                }else if(args[0].equalsIgnoreCase("pull") || args[1].equalsIgnoreCase("show")){
                     returnArray = (ArrayList<String>) tabComplete.clone();
+                    return returnArray;
+                }
+            }else if(args.length ==3){
+                if(args[0].equalsIgnoreCase("deposit") && !(args[1].equalsIgnoreCase("all"))){
+                    returnArray = new ArrayList<>(Arrays.asList("all","64"));
+                    return returnArray;
+                }else if(args[0].equalsIgnoreCase("pull")){
+                    returnArray = new ArrayList<>(Arrays.asList("limit","64"));
                     return returnArray;
                 }
             }

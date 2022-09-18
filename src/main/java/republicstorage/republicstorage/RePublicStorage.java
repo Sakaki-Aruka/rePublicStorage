@@ -25,7 +25,7 @@ public final class RePublicStorage extends JavaPlugin implements CommandExecutor
         this.load();
         saveDefaultConfig();
         getCommand("storage").setExecutor(new PublicStorageMain());
-        getCommand("storagewrite").setExecutor(this);
+        getCommand("storageloads").setExecutor(this);
     }
 
     @Override
@@ -36,8 +36,24 @@ public final class RePublicStorage extends JavaPlugin implements CommandExecutor
 
     @Override
     public boolean onCommand(CommandSender sender,Command command,String label,String[] args){
-        writeMain();
+        if(args[0].equalsIgnoreCase("write")){
+            writeMain();
+        }else if(args[0].equalsIgnoreCase("forceload")){
+            readMain();
+        }else{
+            return false;
+        }
+
         return true;
+    }
+
+    public void readMain(){
+        itemAmountMap.clear();
+        ignore.clear();
+        tabComplete.clear();
+        reloadConfig();
+        this.load();
+
     }
 
     public void writeMain(){
