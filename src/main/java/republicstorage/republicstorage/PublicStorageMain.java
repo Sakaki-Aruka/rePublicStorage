@@ -16,9 +16,7 @@ public class PublicStorageMain implements CommandExecutor, TabCompleter {
         Player player =(Player) sender;
 
         if(!(sender instanceof Player) || args.length != 3){
-            if(!(args[0].equalsIgnoreCase("debug") || args[0].equalsIgnoreCase("modify")) && !(sender.isOp())){
-                return false;
-            }else if(args[0].equalsIgnoreCase("show") && args.length != 2){
+            if(args[0].equalsIgnoreCase("show") && args.length != 2){
                 return false;
             }else if (args[0].equalsIgnoreCase("write") && args.length > 1){
                 return false;
@@ -33,7 +31,13 @@ public class PublicStorageMain implements CommandExecutor, TabCompleter {
                 break;
 
             case "debug":
-                new Debug().mapDebug(player);
+                if(sender.isOp()){
+                    new Debug().mapDebug(player);
+                }else{
+                    sender.sendMessage("You cannot use this command.");
+                    return false;
+                }
+
                 break;
 
             case "pull":
@@ -41,7 +45,13 @@ public class PublicStorageMain implements CommandExecutor, TabCompleter {
                 break;
 
             case "modify":
-                new Debug().mapModify(player,args);
+                if(sender.isOp()){
+                    new Debug().mapModify(player,args);
+                }else{
+                    sender.sendMessage("You cannot use this command.");
+                    return false;
+                }
+
                 break;
 
             case "show":
