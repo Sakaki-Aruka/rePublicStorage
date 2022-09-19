@@ -2,7 +2,8 @@
 
 items: 1
 
-ignore: ""
+ignore: "LAVA_BUCKET"
+patternIgnore: "BOOK,MAP,SKULL,GOAT_HORN,FIREWORK_ROCKET"
 
 item0:
   name: STONE

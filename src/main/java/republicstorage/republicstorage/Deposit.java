@@ -1,9 +1,15 @@
 package republicstorage.republicstorage;
 
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import static republicstorage.republicstorage.SettingsLoad.ignore;
 import static republicstorage.republicstorage.SettingsLoad.itemAmountMap;
@@ -11,101 +17,212 @@ import static republicstorage.republicstorage.SettingsLoad.itemAmountMap;
 public class Deposit{
     public void depositMain(String[] args, Player player){
 
-        int requestAmount =0;
-        try{
-            if(!(args[1].equalsIgnoreCase("all")) && !(args[1].equalsIgnoreCase("hand"))){
-                requestAmount = Integer.valueOf(args[2]);
-            }
-        }catch (Exception exception){
-            System.out.println("[PublicStorage]:Request amount type error.[Not int]");
-            return;
-        }
+        if(args[1].equalsIgnoreCase("all") && args.length==2){
+            // all deposit
+            Inventory inventory = player.getInventory();
+            for (int i=0;i < player.getInventory().getSize(); i++){
 
-        if(args[1].equalsIgnoreCase("all")){
-            // storage deposit all
-            for(int i=0;i < player.getInventory().getSize();i++){
-                ItemStack itemStack = player.getInventory().getItem(i);
-                if(itemStack == null || this.ignoreCheck(itemStack.getType().name()) || itemStack.getEnchantments() != null){
-                    // ignore item or no item on a target slot
+                String itemName;
+                try{
+                    itemName= inventory.getItem(i).getType().name();
+                } catch (Exception exception){
                     continue;
-                }else{
-                    // exist uploadable item
-                    String name = itemStack.getType().name();
-                    if(itemAmountMap.containsKey(name)){
-                        long amountOnMap = itemAmountMap.get(name) + itemStack.getAmount();
-                        itemAmountMap.replace(name,amountOnMap);
+                }
+                ItemStack itemStack = inventory.getItem(i);
+
+
+                //debug (ignoreCheck use)
+                if(itemStack.getEnchantments().isEmpty() && ignoreCheck(itemName)){
+                    // exist item and no enchantment
+                    if(itemAmountMap.containsKey(itemName)){
+                        // exist on the storage hashmap
+                        long value = itemAmountMap.get(itemName) + itemStack.getAmount();
+                        itemAmountMap.replace(itemName,value);
+                        itemStack.setAmount(0);
+
                     }else{
-                        long amountPut = itemStack.getAmount();
-                        itemAmountMap.put(name,amountPut);
+                        // not exist on the hashmap
+                        long value = itemStack.getAmount();
+                        itemAmountMap.put(itemName,value);
+                        itemStack.setAmount(0);
                     }
 
-                    itemStack.setAmount(0);
+                }else{
+                    //debug
+                    player.sendMessage("enchant:"+itemStack.getEnchantments());
 
-                }
-            }
-
-        }else if(args[1].equalsIgnoreCase("hand")){
-            // storage deposit hand
-            String name = player.getInventory().getItemInOffHand().getType().name();
-            if(!(this.ignoreCheck(name))){
-                player.sendMessage("§cDenied to upload.[Invalid item error]");
-                //ignore check
-                return;
-            }
-
-            for(int i=0;i < player.getInventory().getSize(); i++){
-                ItemStack loopStack = player.getInventory().getItem(i);
-                if(loopStack == null || !(loopStack.getType().name().equalsIgnoreCase(name)) || loopStack.getEnchantments() != null){
-                    // no item or not match item on a slot
+                    // not exist item
+                    player.sendMessage("§cInvalid item.1");
                     continue;
-                }else if(loopStack.getType().name().equalsIgnoreCase(name)){
-                    // match items name
-                    long amountOnMap = itemAmountMap.get(name) + loopStack.getAmount();
-                    itemAmountMap.replace(name,amountOnMap);
-                    loopStack.setAmount(0);
                 }
             }
+        }else if(args[2].equalsIgnoreCase("all")){
 
-        }else if(itemAmountMap.containsKey(args[1].toUpperCase(Locale.ROOT))){
-            // storage deposit [ItemId]
-            String requestId = args[1].toUpperCase(Locale.ROOT);
-            if(this.ignoreCheck(requestId)){
-                player.sendMessage("§cDenied to upload.[Invalid item error]");
-                return;
-            }
-            for (int i=0;i < player.getInventory().getSize();i++){
-                ItemStack loopStack = player.getInventory().getItem(i);
-                if(loopStack == null || !(loopStack.getType().name().equalsIgnoreCase(requestId)) || loopStack.getEnchantments() != null){
-                    continue;
-                }else if(loopStack.getType().name().equalsIgnoreCase(requestId)){
-                    // match request item
+            String idUpper = args[1].toUpperCase(Locale.ROOT);
+            PlayerInventory playerInventory = player.getInventory();
 
-                    if(requestAmount - loopStack.getAmount() <= loopStack.getMaxStackSize()){
-                        loopStack.setAmount(0);
-                        requestAmount -= loopStack.getAmount();
-                        long amountOnMap = itemAmountMap.get(requestId) + loopStack.getAmount();
-                        itemAmountMap.replace(requestId,amountOnMap);
+            if(args[1].equalsIgnoreCase("hand") && playerInventory.getItemInMainHand() != null){
+                // id:hand && amount:all
+                if(this.ignoreCheck(playerInventory.getItemInMainHand().getType().name())){
+                    // not ignore in main hand
+                    String mainHandID = playerInventory.getItemInMainHand().getType().name();
+                    for (int i=0;i < playerInventory.getSize();i++){
 
-                    }else if(requestAmount - loopStack.getAmount() <= 0){
-                        loopStack.setAmount(loopStack.getAmount() - requestAmount);
-                        long amountOnMap = itemAmountMap.get(requestId) + (loopStack.getAmount() - requestAmount);
-                        itemAmountMap.replace(requestId,amountOnMap);
-                        return;
+                        ItemStack itemStack;
+                        try{
+                            itemStack = playerInventory.getItem(i);
+                            if(itemStack == null){
+                                continue;
+                            }
+                        }catch (Exception exception){
+                            // no item on the slot
+                            continue;
+                        }
+
+                        if(itemStack.getType().name().equals(mainHandID)){
+                            if(itemAmountMap.containsKey(itemStack.getType().name())){
+                                // exist on the hashmap
+                                long value = itemAmountMap.get(mainHandID) + itemStack.getAmount();
+                                itemAmountMap.replace(mainHandID,value);
+                                itemStack.setAmount(0);
+
+                            }else{
+                                // not exist on the hashmap
+                                long value = itemStack.getAmount();
+                                itemAmountMap.put(mainHandID,value);
+                                itemStack.setAmount(0);
+
+                            }
+                        }
                     }
-                    if(i==player.getInventory().getSize() -1 && requestAmount - loopStack.getAmount() > 0){
-                        player.sendMessage("[PublicStorage]:Remaining "+requestAmount);
-                        return;
+
+                }else{
+                    player.sendMessage("§cInvalid item. [ignore item]");
+                    return;
+                }
+            }else{
+                // id:[ID] && amount:all
+                try{
+                    Material material = Material.valueOf(idUpper);
+                }catch (Exception exception){
+                    player.sendMessage("§cInvalid item.");
+                    return;
+                }
+                for(int i=0;i < playerInventory.getSize();i++){
+
+                    ItemStack itemStack;
+                    try{
+                        itemStack = playerInventory.getItem(i);
+                    }catch (Exception exception){
+                        continue;
+                    }
+
+                    if(itemStack.getType().name().equalsIgnoreCase(idUpper) && itemAmountMap.containsKey(idUpper)){
+                        // exist the id on the hashmap
+                        long value = itemAmountMap.get(idUpper) + itemStack.getAmount();
+                        itemAmountMap.replace(idUpper,value);
+                        itemStack.setAmount(0);
+
+                    }else if(itemStack.getType().name().equalsIgnoreCase(idUpper) && !(itemAmountMap.containsKey(idUpper))){
+                        // not exist the id on the hashmap
+                        long value = itemStack.getAmount();
+                        itemAmountMap.put(idUpper,value);
+                        itemStack.setAmount(0);
+
                     }
                 }
+
             }
         }else{
-            player.sendMessage("§c[PublicStorage]:Cannot use.[Invalid argument]");
-            return;
-        }
+            // set amount number
+            int requestAmount;
+            int requestCopy;
+            try{
+                requestAmount = Integer.valueOf(args[2]);
+                requestCopy = requestAmount;
+                if(requestAmount < 0 || 2000 < requestAmount){
+                    player.sendMessage("§cInvalid amount.[<0 or >2000");
+                    return;
+                }
+                try{
+                    Material test = Material.valueOf(args[1].toUpperCase(Locale.ROOT));
+                }catch (Exception exception){
+                    player.sendMessage("§cInvalid ItemID.");
+                    return;
+                }
+            }catch(Exception exception){
+                player.sendMessage("§cInvalid amount.");
+                return;
+            }
 
+            String idUpper = args[1].toUpperCase(Locale.ROOT);
+            PlayerInventory playerInventory = player.getInventory();
+
+
+            // hashmap contains the key
+            for (int i=0;i < playerInventory.getSize();i++){
+                try{
+                    if(player.getInventory().getItem(i).getType().name().equalsIgnoreCase(idUpper)){
+                        if(requestAmount - playerInventory.getItem(i).getAmount() < 0){
+                            // finish loop
+                            playerInventory.getItem(i).setAmount(playerInventory.getItem(i).getAmount() - requestAmount);
+
+                            if(itemAmountMap.containsKey(idUpper)){
+                                itemAmountMap.replace(idUpper,itemAmountMap.get(idUpper)+(long)requestCopy);
+                                player.sendMessage("§aFinish deposit.");
+
+                                return;
+                            }else{
+                                long value = requestCopy;
+                                itemAmountMap.put(idUpper,value);
+                                player.sendMessage("§aFinish deposit.");
+                            }
+
+
+                        }else{
+                            if(i == playerInventory.getSize()-1){
+                                player.sendMessage("§cShortage:"+requestAmount);
+
+                                if(itemAmountMap.containsKey(idUpper)){
+                                    itemAmountMap.replace(idUpper,itemAmountMap.get(idUpper) +(long)requestCopy - requestAmount);
+                                    return;
+                                }else{
+                                    long value = requestCopy - requestAmount;
+                                    itemAmountMap.put(idUpper,value);
+                                }
+
+                            }else{
+                                requestAmount -= player.getInventory().getItem(i).getAmount();
+                                playerInventory.getItem(i).setAmount(0);
+                            }
+                        }
+                    }
+                }catch (Exception exception){
+                    continue;
+                }
+            }
+        }
     }
 
     boolean ignoreCheck(String itemName){
+
+        //debug
+        try{
+            Material material = Material.valueOf(itemName);
+            short durability = material.getMaxDurability();
+            System.out.println("Durability:"+durability);
+            int maxStack = material.getMaxStackSize();
+            System.out.println("maxStack:"+maxStack);
+            if(maxStack == 1){
+                //exists durability and max stack is 1.
+                return false;
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
         if(ignore.contains(itemName)){
             return false;
         }else{

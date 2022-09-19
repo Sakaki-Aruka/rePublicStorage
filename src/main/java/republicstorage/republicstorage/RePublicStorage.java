@@ -4,9 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Locale;
@@ -25,7 +22,7 @@ public final class RePublicStorage extends JavaPlugin implements CommandExecutor
         this.load();
         saveDefaultConfig();
         getCommand("storage").setExecutor(new PublicStorageMain());
-        getCommand("storagewrite").setExecutor(this);
+        getCommand("storageloads").setExecutor(this);
     }
 
     @Override
@@ -36,8 +33,24 @@ public final class RePublicStorage extends JavaPlugin implements CommandExecutor
 
     @Override
     public boolean onCommand(CommandSender sender,Command command,String label,String[] args){
-        writeMain();
+        if(args[0].equalsIgnoreCase("write")){
+            writeMain();
+        }else if(args[0].equalsIgnoreCase("forceload")){
+            readMain();
+        }else{
+            return false;
+        }
+
         return true;
+    }
+
+    public void readMain(){
+        itemAmountMap.clear();
+        ignore.clear();
+        tabComplete.clear();
+        reloadConfig();
+        this.load();
+
     }
 
     public void writeMain(){
@@ -57,16 +70,6 @@ public final class RePublicStorage extends JavaPlugin implements CommandExecutor
 
             loop++;
         }
-
-        /*
-        itemAmountMap.clear();
-        ignore.clear();
-        tabComplete.clear();
-
-        reloadConfig();
-        this.load();
-        */
-
 
         return;
     }
