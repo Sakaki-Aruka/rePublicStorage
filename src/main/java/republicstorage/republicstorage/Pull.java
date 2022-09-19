@@ -74,7 +74,6 @@ public class Pull {
             String name = args[1].toUpperCase(Locale.ROOT);
             long remaining = itemAmountMap.get(name) - requestAmount;
 
-
             itemAmountMap.replace(name,remaining);
             return;
         }
