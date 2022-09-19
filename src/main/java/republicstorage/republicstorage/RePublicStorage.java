@@ -4,9 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Locale;
@@ -73,16 +70,6 @@ public final class RePublicStorage extends JavaPlugin implements CommandExecutor
 
             loop++;
         }
-
-        /*
-        itemAmountMap.clear();
-        ignore.clear();
-        tabComplete.clear();
-
-        reloadConfig();
-        this.load();
-        */
-
 
         return;
     }

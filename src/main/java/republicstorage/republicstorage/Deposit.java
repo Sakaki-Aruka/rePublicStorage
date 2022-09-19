@@ -207,7 +207,20 @@ public class Deposit{
     boolean ignoreCheck(String itemName){
 
         //debug
-        //return true;
+        try{
+            Material material = Material.valueOf(itemName);
+            short durability = material.getMaxDurability();
+            System.out.println("Durability:"+durability);
+            int maxStack = material.getMaxStackSize();
+            System.out.println("maxStack:"+maxStack);
+            if(maxStack == 1){
+                //exists durability and max stack is 1.
+                return false;
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
 
         if(ignore.contains(itemName)){
