@@ -46,6 +46,9 @@ public class Pull {
             if(limit < 1){
                 player.sendMessage("§c[PublicStorage]:Storage Empty error.");
                 return;
+            }else if(limit >2000){
+                player.sendMessage("§c[PublicStorage]:Limit over the limit error.");
+                return;
             }
 
             ItemStack itemStack = new ItemStack(Material.valueOf(args[1].toUpperCase(Locale.ROOT)));

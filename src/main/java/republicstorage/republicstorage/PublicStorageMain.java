@@ -58,6 +58,10 @@ public class PublicStorageMain implements CommandExecutor, TabCompleter {
                 new Show().showMain(player,args);
                 break;
 
+            case "pattern":
+                new Show().patternShowMain(player,args);
+                break;
+
         }
 
         return true;
@@ -67,7 +71,7 @@ public class PublicStorageMain implements CommandExecutor, TabCompleter {
         ArrayList<String> returnArray;
 
         if(args.length==1){
-            ArrayList<String> category = new ArrayList<>(Arrays.asList("deposit","pull","show","debug","modify"));
+            ArrayList<String> category = new ArrayList<>(Arrays.asList("deposit","pull","show","debug","modify","pattern"));
             returnArray = new ArrayList<>();
             for(String loop : category){
                 if(loop.contains(args[0])){

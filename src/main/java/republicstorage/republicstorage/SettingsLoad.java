@@ -12,6 +12,7 @@ public class SettingsLoad {
 
     public static Map<String,Long> itemAmountMap = new HashMap<>();
     public static ArrayList<String> ignore;
+    public static ArrayList<String> patternIgnore;
     public static ArrayList<String> tabComplete = new ArrayList<>();
 
     public void fc(FileConfiguration fileConfiguration){
@@ -22,6 +23,9 @@ public class SettingsLoad {
     private void configLoad(){
         int items = FC.getInt("items");
         ignore = new ArrayList<>(Arrays.asList(FC.getString("ignore").split(",")));
+        if(FC.contains("patternIgnore")){
+            patternIgnore = new ArrayList<>(Arrays.asList(FC.getString("patternIgnore").split(",")));
+        }
 
         for(int i=0;i < items;i++){
             String itemName = FC.getString("item"+i+".name");

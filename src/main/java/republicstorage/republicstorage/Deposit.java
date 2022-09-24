@@ -11,8 +11,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static republicstorage.republicstorage.SettingsLoad.ignore;
-import static republicstorage.republicstorage.SettingsLoad.itemAmountMap;
+import static republicstorage.republicstorage.SettingsLoad.*;
 
 public class Deposit{
     public void depositMain(String[] args, Player player){
@@ -48,11 +47,8 @@ public class Deposit{
                     }
 
                 }else{
-                    //debug
-                    player.sendMessage("enchant:"+itemStack.getEnchantments());
-
                     // not exist item
-                    player.sendMessage("§cInvalid item.1");
+                    player.sendMessage("§cInvalid item found. Slot "+i+" / "+itemStack.getType().name());
                     continue;
                 }
             }
@@ -113,6 +109,9 @@ public class Deposit{
                     ItemStack itemStack;
                     try{
                         itemStack = playerInventory.getItem(i);
+                        if(itemStack == null){
+                            continue;
+                        }
                     }catch (Exception exception){
                         continue;
                     }
@@ -170,12 +169,14 @@ public class Deposit{
                             if(itemAmountMap.containsKey(idUpper)){
                                 itemAmountMap.replace(idUpper,itemAmountMap.get(idUpper)+(long)requestCopy);
                                 player.sendMessage("§aFinish deposit.");
+                                player.sendMessage("§a"+idUpper+" / "+requestCopy);
 
                                 return;
                             }else{
                                 long value = requestCopy;
                                 itemAmountMap.put(idUpper,value);
                                 player.sendMessage("§aFinish deposit.");
+                                player.sendMessage("§a"+idUpper+" / "+value);
                             }
 
 
@@ -206,13 +207,22 @@ public class Deposit{
 
     boolean ignoreCheck(String itemName){
 
-        //debug
+
         try{
+            if(!(patternIgnore.isEmpty())){
+                for (String loop : patternIgnore){
+                    if(itemName.contains(loop)){
+
+                        //debug
+                        System.out.println("Ignored by PatternIgnore:"+itemName);
+                        return false;
+                    }
+                }
+            }
+
             Material material = Material.valueOf(itemName);
             short durability = material.getMaxDurability();
-            System.out.println("Durability:"+durability);
             int maxStack = material.getMaxStackSize();
-            System.out.println("maxStack:"+maxStack);
             if(maxStack == 1){
                 //exists durability and max stack is 1.
                 return false;

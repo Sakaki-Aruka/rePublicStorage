@@ -48,6 +48,12 @@ public final class RePublicStorage extends JavaPlugin implements CommandExecutor
         itemAmountMap.clear();
         ignore.clear();
         tabComplete.clear();
+        try{
+            patternIgnore.clear();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         reloadConfig();
         this.load();
 
@@ -71,6 +77,10 @@ public final class RePublicStorage extends JavaPlugin implements CommandExecutor
             loop++;
         }
 
+        if(!(patternIgnore.isEmpty())){
+            String pattern = String.join(",",patternIgnore);
+            FC.set("patternIgnore",pattern);
+        }
         return;
     }
 }
