@@ -58,6 +58,7 @@ public class Pull {
             String name = args[1].toUpperCase(Locale.ROOT);
             long remaining = itemAmountMap.get(name) - limit;
             itemAmountMap.replace(name,remaining);
+            player.sendMessage("§a[PublicStorage]Result:"+(remaining+limit)+" -> "+remaining);
             return;
 
         }else{
@@ -76,6 +77,8 @@ public class Pull {
 
             String name = args[1].toUpperCase(Locale.ROOT);
             long remaining = itemAmountMap.get(name) - requestAmount;
+            long before = itemAmountMap.get(args[1].toUpperCase(Locale.ROOT));
+            player.sendMessage("§a[PublicStorage]Result: "+before+" -> "+remaining);
 
             itemAmountMap.replace(name,remaining);
             return;
