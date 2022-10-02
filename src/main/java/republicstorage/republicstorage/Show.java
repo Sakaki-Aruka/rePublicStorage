@@ -1,5 +1,6 @@
 package republicstorage.republicstorage;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -12,7 +13,11 @@ public class Show {
         for(String loop : ids){
             String upperLoop = loop.toUpperCase(Locale.ROOT);
             if(itemAmountMap.containsKey(upperLoop)){
-                player.sendMessage("[Result(Show)]:"+upperLoop+" / "+itemAmountMap.get(upperLoop));
+                //display amount (on storage)
+                double exchangeStack = itemAmountMap.get(upperLoop) / (Material.valueOf(upperLoop).getMaxStackSize());
+                double rounded = Math.floor(exchangeStack);
+                player.sendMessage("[Result(Show)]:"+upperLoop+" / "+itemAmountMap.get(upperLoop)+" / "+String.valueOf(rounded).replace(".0","")+" st");
+
             }else if(args[1].equalsIgnoreCase("ignore")){
                 // show ignore items list
                 player.sendMessage("§3[Result(Ignore)]:"+String.join(",",ignore));
@@ -34,7 +39,10 @@ public class Show {
 
         for(Map.Entry<String,Long> entry : itemAmountMap.entrySet()){
             if(entry.getKey().contains(requestID.toUpperCase(Locale.ROOT))){
-                player.sendMessage("[Result(Pattern)]:"+entry.getKey()+" / "+entry.getValue());
+                double exchangeStack =  entry.getValue()/ (Material.valueOf(entry.getKey().toUpperCase(Locale.ROOT))).getMaxStackSize();
+                double rounded = Math.floor(exchangeStack);
+
+                player.sendMessage("[Result(Pattern)]:"+entry.getKey()+" / "+entry.getValue()+" / "+String.valueOf(rounded).replace(".0","")+" st");
                 ids++;
             }
         }

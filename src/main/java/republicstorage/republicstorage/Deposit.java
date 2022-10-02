@@ -120,25 +120,27 @@ public class Deposit{
                         // exist the id on the hashmap
                         long value = itemAmountMap.get(idUpper) + itemStack.getAmount();
                         itemAmountMap.replace(idUpper,value);
+
                         itemStack.setAmount(0);
 
                     }else if(itemStack.getType().name().equalsIgnoreCase(idUpper) && !(itemAmountMap.containsKey(idUpper))){
                         // not exist the id on the hashmap
+
                         long value = itemStack.getAmount();
                         itemAmountMap.put(idUpper,value);
                         itemStack.setAmount(0);
 
                     }
                 }
-
+                this.finishMessages(player,idUpper);
+                return;
             }
         }else{
             // set amount number
             int requestAmount;
-            int requestCopy;
             try{
                 requestAmount = Integer.valueOf(args[2]);
-                requestCopy = requestAmount;
+
                 if(requestAmount < 0 || 2000 < requestAmount){
                     player.sendMessage("§cInvalid amount.[<0 or >2000");
                     return;
@@ -150,62 +152,153 @@ public class Deposit{
                     return;
                 }
             }catch(Exception exception){
-                player.sendMessage("§cInvalid amount.");
-                return;
+                //amount used "stack"
+                if(args[2].contains("st")){
+                    try{
+                        int stack = Integer.valueOf(args[2].replace("st",""));
+
+                        String id;
+                        if(args[1].equalsIgnoreCase("hand")){
+                            id = player.getInventory().getItemInMainHand().getType().toString();
+                        }else{
+                            id = args[1].toUpperCase(Locale.ROOT);
+                        }
+
+                        if(new stackSupport().supportMain(2001,stack,id,"deposit")){
+                            requestAmount = stack * Material.valueOf(id).getMaxStackSize();
+                        }else{
+                            player.sendMessage("§c[PublicStorage]:A request amount -> over the limit(2000).Error.");
+                            return;
+                        }
+                    }catch (Exception e){
+                        player.sendMessage("§c[PublicStorage]:Invalid Amount.");
+
+                        //debug
+                        player.sendMessage("inMainHand:"+player.getInventory().getItemInMainHand().getType());
+                        player.sendMessage("inMainHand-Name:"+player.getInventory().getItemInMainHand().getType().name());
+                        player.sendMessage("inMainHand-toString:"+player.getInventory().getItemInMainHand().getType().toString());
+
+                        return;
+                    }
+                }else{
+                    player.sendMessage("§cInvalid amount.");
+                    return;
+                }
+
             }
 
-            String idUpper = args[1].toUpperCase(Locale.ROOT);
-            PlayerInventory playerInventory = player.getInventory();
+            String idUpper;
+            if(args[1].equalsIgnoreCase("hand")){
+                idUpper = player.getInventory().getItemInMainHand().getType().toString();
+            }else{
+                idUpper = args[1].toUpperCase(Locale.ROOT);
+            }
 
 
             // hashmap contains the key
-            for (int i=0;i < playerInventory.getSize();i++){
-                try{
-                    if(player.getInventory().getItem(i).getType().name().equalsIgnoreCase(idUpper)){
-                        if(requestAmount - playerInventory.getItem(i).getAmount() < 0){
-                            // finish loop
-                            playerInventory.getItem(i).setAmount(playerInventory.getItem(i).getAmount() - requestAmount);
+            long LongRequest = requestAmount;
+            long playerHave = this.getPlayerHave(Material.valueOf(idUpper),player);
+            if(playerHave == 0){
+                new Message().send(1,"Do not have.",player);
+                return;
+            }
 
-                            if(itemAmountMap.containsKey(idUpper)){
-                                itemAmountMap.replace(idUpper,itemAmountMap.get(idUpper)+(long)requestCopy);
-                                player.sendMessage("§aFinish deposit.");
-                                player.sendMessage("§a"+idUpper+" / "+requestCopy);
+            long diff = playerHave - LongRequest;
+            long onStorage;
+            if(itemAmountMap.containsKey(idUpper)){
+                onStorage = itemAmountMap.get(idUpper);
+            }else{
+                onStorage = 0;
+            }
 
-                                return;
-                            }else{
-                                long value = requestCopy;
-                                itemAmountMap.put(idUpper,value);
-                                player.sendMessage("§aFinish deposit.");
-                                player.sendMessage("§a"+idUpper+" / "+value);
-                            }
+            long remove;
+
+            if(diff >= 0){
+                // have equals remove
+                remove = LongRequest;
+            }else{
+                // have shorter than remove
+                remove = playerHave;
+            }
+            this.remove(remove,playerHave,player,Material.valueOf(idUpper));
+
+            //debug
+            player.sendMessage("playerHave:"+playerHave);
+            player.sendMessage("playerRequest:"+LongRequest);
+            player.sendMessage("remove:"+remove);
 
 
-                        }else{
-                            if(i == playerInventory.getSize()-1){
-                                player.sendMessage("§cShortage:"+requestAmount);
+            itemAmountMap.replace(idUpper,onStorage + remove);
+            String send = "deposit: "+onStorage+" -> "+(onStorage+remove);
+            new Message().send(0,send,player);
+            return;
 
-                                if(itemAmountMap.containsKey(idUpper)){
-                                    itemAmountMap.replace(idUpper,itemAmountMap.get(idUpper) +(long)requestCopy - requestAmount);
-                                    return;
-                                }else{
-                                    long value = requestCopy - requestAmount;
-                                    itemAmountMap.put(idUpper,value);
-                                }
 
-                            }else{
-                                requestAmount -= player.getInventory().getItem(i).getAmount();
-                                playerInventory.getItem(i).setAmount(0);
-                            }
-                        }
+        }
+    }
+
+    private void finishMessages(Player player,String idUpper){
+        player.chat("/storage show "+idUpper);
+        player.sendMessage("§aFinish deposit.");
+        return;
+    }
+
+    private long getPlayerHave(Material material,Player player){
+        long amount = 0;
+
+        for(int i=0;i<36;i++){
+            Inventory inventory = player.getInventory();
+            try{
+                if(inventory.getItem(i).getType().equals(material)){
+                    amount += inventory.getItem(i).getAmount();
+                }
+            }catch (Exception e){
+                //null
+            }
+        }
+
+        return amount;
+    }
+
+    private void remove(long remove,long have,Player player,Material material){
+        int slots = 36;
+        long erase = 0;
+
+        //ignore check
+        if(!this.ignoreCheck(material.name())){
+            new Message().send(1,"Invalid ID(Ignored)",player);
+            return;
+        }
+
+        for(int i=0;i<slots;i++){
+
+            //debug
+            player.sendMessage("slot"+i+" in remove method.");
+
+            ItemStack itemStack = player.getInventory().getItem(i);
+            if(itemStack == null) {
+                //null
+            }else{
+                if (itemStack.getType().equals(material)) {
+                    if(erase + itemStack.getAmount() < remove){
+                        erase = erase + itemStack.getAmount();
+                        itemStack.setAmount(0);
+
+                        //debug
+                        player.sendMessage("erase:"+erase);
+
+                    }else if(erase + itemStack.getAmount() >= remove){
+                        int remaining = (int)(have - remove) % material.getMaxStackSize();
+                        itemStack.setAmount(remaining);
+                        return;
+
                     }
-                }catch (Exception exception){
-                    continue;
                 }
             }
         }
     }
 
-    boolean ignoreCheck(String itemName){
+    private boolean ignoreCheck(String itemName){
 
 
         try{
