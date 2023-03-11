@@ -13,6 +13,6 @@ commands:
 
 permissions:
   storage.default:
-    default: true
+    default: false
   storage.op:
     default: op

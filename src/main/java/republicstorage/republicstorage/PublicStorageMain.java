@@ -14,6 +14,15 @@ import static republicstorage.republicstorage.SettingsLoad.tabComplete;
 public class PublicStorageMain implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender sender, Command command,String label,String[] args){
         Player player =(Player) sender;
+        if(args.length == 0){
+            player.sendMessage("§cInvalid Storage command.");
+            return false;
+        }
+
+        if(!player.hasPermission("storage.default")){
+            player.sendMessage("§cYou do not have the permission to use this command.");
+            return false;
+        }
 
         if(!(sender instanceof Player) || args.length != 3){
             if(args[0].equalsIgnoreCase("show") && args.length != 2){
