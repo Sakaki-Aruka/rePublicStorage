@@ -21,7 +21,7 @@ public final class RePublicStorage extends JavaPlugin implements CommandExecutor
     public void onEnable() {
         this.load();
         saveDefaultConfig();
-        getCommand("storage").setExecutor(new PublicStorageMain());
+        getCommand("storage").setExecutor();
         getCommand("storageloads").setExecutor(this);
     }
 
