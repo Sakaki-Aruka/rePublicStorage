@@ -15,9 +15,6 @@ public class SettingsLoad {
     public static ArrayList<String> patternIgnore;
     public static ArrayList<String> tabComplete = new ArrayList<>();
 
-    // === defined value ===
-    public static final int TRADE_LIMIT = 2000;
-
     public void fc(FileConfiguration fileConfiguration){
         FC = fileConfiguration;
         this.configLoad();
