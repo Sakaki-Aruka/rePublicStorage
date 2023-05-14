@@ -1,10 +1,12 @@
 republicstorage\republicstorage\Pull.class
 republicstorage\republicstorage\PublicStorageMain.class
 republicstorage\republicstorage\SettingsLoad.class
+republicstorage\republicstorage\utils\AmountUtil.class
+republicstorage\republicstorage\Message.class
 republicstorage\republicstorage\stackSupport.class
 republicstorage\republicstorage\Help.class
 republicstorage\republicstorage\Show.class
+republicstorage\republicstorage\utils\ArgsUtil.class
 republicstorage\republicstorage\Deposit.class
-republicstorage\republicstorage\Message.class
 republicstorage\republicstorage\Debug.class
 republicstorage\republicstorage\RePublicStorage.class

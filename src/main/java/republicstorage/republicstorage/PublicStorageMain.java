@@ -29,14 +29,15 @@ public class PublicStorageMain implements CommandExecutor, TabCompleter {
                 return false;
             }else if (args[0].equalsIgnoreCase("write") && args.length > 1){
                 return false;
-            }else if(args[0].equalsIgnoreCase("deposit") && !(args[1].equalsIgnoreCase("all"))){
-                return false;
             }
+//            else if(args[0].equalsIgnoreCase("deposit") && !(args[1].equalsIgnoreCase("all"))){
+//                return false;
+//            }
         }
 
         switch (args[0]){
             case "deposit":
-                new Deposit().depositMain(args,player);
+                new Deposit().deposit(args,player);
                 break;
 
             case "debug":
