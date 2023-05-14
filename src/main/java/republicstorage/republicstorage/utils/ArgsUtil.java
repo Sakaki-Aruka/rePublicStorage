@@ -14,7 +14,10 @@ public class ArgsUtil {
         List<String> list = Arrays.asList(args);
         if(list.isEmpty() || list.size() == 1) return false;
         if(list.get(0).equalsIgnoreCase("deposit")) {
-            if(list.size() != 3) return false;
+            if(list.size() != 3) {
+                if(list.size() != 2) return false;
+                return list.get(1).equalsIgnoreCase("all");
+            }
             // TODO : write ID checker (contains "hand")
             // /storage deposit stone [1,1st,all]
             String id = list.get(1).toUpperCase();

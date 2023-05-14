@@ -13,6 +13,7 @@ commands:
 
 permissions:
   storage.default:
-    default: false
+    # TODO: rewrite here
+    default: op
   storage.op:
     default: op
