@@ -33,9 +33,13 @@ public class ArgsUtil {
             String id = list.get(1);
             String amount = list.get(2);
             if(!isCorrectID(id,null)) return false;
-            if(! new AmountUtil().isCorrectPullAmount(amount)) return false;
+            if(! new AmountUtil().isCorrectPullAmount(amount,id.toUpperCase())) return false;
 
+        }else if(list.get(0).equalsIgnoreCase("show")) {
+            // /storage show [id]
         }
+
+
         return true;
     }
 

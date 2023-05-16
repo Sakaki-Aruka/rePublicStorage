@@ -30,9 +30,6 @@ public class PublicStorageMain implements CommandExecutor, TabCompleter {
             }else if (args[0].equalsIgnoreCase("write") && args.length > 1){
                 return false;
             }
-//            else if(args[0].equalsIgnoreCase("deposit") && !(args[1].equalsIgnoreCase("all"))){
-//                return false;
-//            }
         }
 
         switch (args[0]){
@@ -51,7 +48,7 @@ public class PublicStorageMain implements CommandExecutor, TabCompleter {
                 break;
 
             case "pull":
-                new Pull().pullMain(args,player);
+                new Pull().pull(args,player);
                 break;
 
             case "modify":

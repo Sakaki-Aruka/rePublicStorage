@@ -13,12 +13,15 @@ import static republicstorage.republicstorage.SettingsLoad.*;
 
 public final class RePublicStorage extends JavaPlugin implements CommandExecutor {
 
+    public static RePublicStorage instance;
+
     public void load(){
         new SettingsLoad().fc(getConfig());
     }
 
     @Override
     public void onEnable() {
+        instance = this;
         this.load();
         saveDefaultConfig();
         getCommand("storage").setExecutor(new PublicStorageMain());
@@ -82,5 +85,9 @@ public final class RePublicStorage extends JavaPlugin implements CommandExecutor
             FC.set("patternIgnore",pattern);
         }
         return;
+    }
+
+    public static RePublicStorage getInstance(){
+        return instance;
     }
 }

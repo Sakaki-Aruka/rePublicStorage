@@ -15,6 +15,8 @@ public class SettingsLoad {
     public static ArrayList<String> patternIgnore;
     public static ArrayList<String> tabComplete = new ArrayList<>();
     public static final long LIMIT_AMOUNT = 2000l;
+    public static final long PULL_INTERVAL_DELAY = 100l;
+    public static final float PULL_LIMIT_RATE = 0.45f;
     public static final String nl  = System.getProperty("line.separator");
 
     public void fc(FileConfiguration fileConfiguration){
